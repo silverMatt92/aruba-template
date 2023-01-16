@@ -1,0 +1,11 @@
+---
+- name: Generate template configuration file
+  template: src=iap_template.j2 dest=./output/iap_{{ vc_key }}_template.txt
+
+- name: Read devices csv data
+  read_csv:
+    path: devices.csv
+  register: data
+
+- name: Generate variable json configuration file
+  template: src=iap_variables.j2 dest=./output/iap_{{ vc_key }}_variables.json

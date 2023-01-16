@@ -1,0 +1,30 @@
+---
+# Virtual Controller info
+country: NL
+vc_key: nl-hq-lab
+syslog_server: 10.10.10.10
+clock_timezone: Amsterdam 01 00
+timezone: CEST
+summer_time_start: last sunday march 00:00
+summer_time_end: last sunday october 03:00
+
+# RF Profiles
+rf_profiles:
+  - {name: indoor_2dot4, zone: indoor, max_pw: 30, min_pw: 3}
+  - {name: indoor_5, zone: indoor, max_pw: 30, min_pw: 3}
+
+# VLANs
+vlans:
+  - {name: TechTeam, id: 20}
+  - {name: Default, id: 11}
+  - {name: Mgmt, id: 4000}
+  - {name: TestVLAN, id: 2001}
+
+# WLANs
+wlans:
+  - {name: aruba_radius, opmode: wpa3-aes-ccm-128, vlan: TechTeam, dot1x: True, radius_name: picnic_radius}
+  - {name: aruba_psk, opmode: wpa3-sae-aes, vlan: TechTeam, dot1x: False, psk: XXXXXX}
+
+# Radius configuration
+radius:
+  - {name: picnic_radius, ip_or_fqdn: 10.10.10.10, secret_key: XXXXXX}

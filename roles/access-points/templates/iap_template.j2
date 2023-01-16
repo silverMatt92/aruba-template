@@ -1,0 +1,199 @@
+
+{# Virtual Controller configuration #}
+virtual-controller-country {{ country }}
+virtual-controller-key {{ vc_key }}
+{% raw %}name %ap_name%
+{% endraw %}
+{% if syslog_server %}
+syslog-server {{ syslog_server }}
+{% endif %}
+terminal-access
+clock timezone {{ clock_timezone }}
+clock summer-time {{ timezone }} recurring {{ summer_time_start }} {{ summer_time_end }}
+rf-band all
+
+allow-new-aps
+
+{# Adaptive Radio Management configuration #}
+arm
+ wide-bands 5ghz
+ 80mhz-support
+ min-tx-power 3
+ max-tx-power 30
+ band-steering-mode prefer-5ghz
+ air-time-fairness-mode default-access
+ client-aware
+ scanning
+
+{# RF Profiles #}
+{% for profile in rf_profiles -%}
+rf dot11g-radio-profile {{ profile['name'] }}
+ zone {{ profile['zone'] }}
+ max-tx-power {{ profile['max_pw'] }}
+ min-tx-power {{ profile['min_pw'] }}
+
+{% endfor %}
+
+
+{# Syslog configuration #}
+syslog-level warn ap-debug 
+syslog-level warn network 
+syslog-level warn security 
+syslog-level warn system 
+syslog-level warn user 
+syslog-level warn user-debug 
+syslog-level warn wireless 
+
+
+
+extended-ssid
+web-server
+ ssl-protocol tlsv1_2
+
+
+{# VLAN configuration #}
+{% for vlan in vlans -%}
+vlan-name {{ vlan['name'] }}
+{% endfor -%}
+{% for vlan in vlans -%}
+vlan {{ vlan['name'] }} {{ vlan['id'] }}
+{% endfor %}
+
+
+
+
+
+{# IAP management configuration #}
+hash-mgmt-password
+hash-mgmt-user admin password hash f382c106021e23260f5641de341e6eda5c933af9b65a403f60a10cd831ed659e53a8b2d3bd
+
+
+{# WLAN configuration #}
+{% for wlan in wlans -%}
+wlan access-rule {{ wlan['name'] }}
+ utf8
+ index 0
+ rule any any match any any any permit
+
+{% endfor %}
+
+wlan access-rule default_wired_port_profile
+ index 1
+ rule any any match any any any permit
+
+{% for wlan in wlans -%}
+wlan ssid-profile {{ wlan['name'] }}
+ enable
+ type employee
+ essid {{ wlan['name'] }}
+ utf8
+ opmode {{ wlan['opmode'] }}
+ max-authentication-failures 0
+ vlan {{ wlan['vlan'] }}
+{% if wlan['dot1x'] %}
+ auth-server {{ wlan['radius_name'] }}
+{% elif wlan['psk'] %}
+ auth-server InternalServer
+ wpa-passphrase {{ wlan['psk'] }}
+{% endif %}
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter arp
+ blacklist
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+
+{% endfor %}
+
+
+auth-survivability cache-time-out 24
+
+
+
+{# Radius configuration, FQDN needs to be < 63 chars #}
+{% for server in radius -%}
+wlan auth-server {{ server['name'] }}
+ ip {{ server['ip_or_fqdn'] }}
+ port 1812
+ acctport 1813
+ key {{ server['secret_key'] }}
+{% endfor %}
+
+wlan external-captive-portal
+ server localhost
+ port 80
+ url "/"
+ auth-text "Authenticated"
+ auto-whitelist-disable
+ https
+
+
+blacklist-time 3600
+auth-failure-blacklist-time 3600
+
+
+
+ids
+ wireless-containment none
+
+
+{# Default wired-port-profile configuration #}
+wired-port-profile default_wired_port_profile
+ switchport-mode trunk
+ allowed-vlan all
+ native-vlan 1
+ no shutdown
+ access-rule-name default_wired_port_profile
+ speed auto
+ duplex full
+ no poe
+ type employee
+ captive-portal disable
+ no dot1x
+
+
+enet0-port-profile default_wired_port_profile
+
+uplink
+ preemption
+ enforce none
+ failover-internet-pkt-lost-cnt 10
+ failover-internet-pkt-send-freq 30
+ failover-vpn-timeout 180
+
+
+
+airgroup
+ disable
+
+airgroupservice airplay
+ disable
+ description AirPlay
+
+airgroupservice airprint
+ disable
+ description AirPrint
+
+
+
+
+
+
+clarity
+ inline-sta-stats
+ inline-auth-stats
+ inline-dhcp-stats
+ inline-dns-stats
+
+cluster-security
+ allow-low-assurance-devices
+
+{# Per-AP settings configuration from variables file #}
+{% raw %}
+per-ap-settings %_sys_lan_mac%
+%if my_name%
+hostname %my_name%
+%endif%
+{% endraw %}

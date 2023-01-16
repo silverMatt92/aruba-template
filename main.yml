@@ -1,0 +1,7 @@
+---
+- name: Generate Aruba IAP configuration files
+  hosts: localhost
+  gather_facts: false
+
+  roles:
+    - access-points
