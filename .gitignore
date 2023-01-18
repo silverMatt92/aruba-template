@@ -1,2 +1,5 @@
 # Var bck files
 roles/access-points/vars/*.bck
+
+# Vault ansible file
+vaultkeyfile
