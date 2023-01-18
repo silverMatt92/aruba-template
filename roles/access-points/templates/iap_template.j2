@@ -65,7 +65,7 @@ vlan {{ vlan['name'] }} {{ vlan['id'] }}
 
 {# IAP management configuration #}
 hash-mgmt-password
-hash-mgmt-user admin password hash f382c106021e23260f5641de341e6eda5c933af9b65a403f60a10cd831ed659e53a8b2d3bd
+hash-mgmt-user {{ username }} password cleartext {{ password }} 
 
 
 {# WLAN configuration #}
