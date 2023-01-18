@@ -1,0 +1,15 @@
+{
+  "CNM6KPPP87": {
+   "_sys_allowed_ap": "d0:4d:c6:c0:c3:ca",
+   "_sys_lan_mac": "d0:4d:c6:c0:c3:ca",
+   "_sys_serial": "CNM6KPPP87",
+   "model": "505",
+   "ap_name": "ap-1-template"
+  },
+  "CNM6KPPPQK": {
+   "_sys_allowed_ap": "d0:4d:c6:c0:c7:3c",
+   "_sys_lan_mac": "d0:4d:c6:c0:c7:3c",
+   "_sys_serial": "CNM6KPPPQK",
+   "model": "505",
+   "ap_name": "ap-2-template"
+  }}

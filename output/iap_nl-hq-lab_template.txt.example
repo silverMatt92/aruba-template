@@ -1,0 +1,203 @@
+
+virtual-controller-country NL
+virtual-controller-key nl-hq-lab
+name %ap_name%
+syslog-server XXXXXXXXXXXXXXXX
+terminal-access
+clock timezone Amsterdam 01 00
+clock summer-time CEST recurring last sunday march 00:00 last sunday october 03:00
+rf-band all
+
+allow-new-aps
+
+arm
+ wide-bands 5ghz
+ 80mhz-support
+ min-tx-power 3
+ max-tx-power 30
+ band-steering-mode prefer-5ghz
+ air-time-fairness-mode default-access
+ client-aware
+ scanning
+
+rf dot11g-radio-profile indoor_2dot4
+ zone indoor
+ max-tx-power 30
+ min-tx-power 3
+
+rf dot11g-radio-profile indoor_5
+ zone indoor
+ max-tx-power 30
+ min-tx-power 3
+
+
+
+syslog-level warn ap-debug 
+syslog-level warn network 
+syslog-level warn security 
+syslog-level warn system 
+syslog-level warn user 
+syslog-level warn user-debug 
+syslog-level warn wireless 
+
+
+
+extended-ssid
+web-server
+ ssl-protocol tlsv1_2
+
+
+vlan-name TechTeam
+vlan-name Default
+vlan-name Mgmt
+vlan-name TestVLAN
+vlan TechTeam 20
+vlan Default 11
+vlan Mgmt 4000
+vlan TestVLAN 2001
+
+
+
+
+
+hash-mgmt-password
+hash-mgmt-user admin password hash XXXXXXXXXXXXXXXX
+
+
+wlan access-rule aruba_radius
+ utf8
+ index 0
+ rule any any match any any any permit
+
+wlan access-rule aruba_psk
+ utf8
+ index 0
+ rule any any match any any any permit
+
+
+wlan access-rule default_wired_port_profile
+ index 1
+ rule any any match any any any permit
+
+wlan ssid-profile aruba_radius
+ enable
+ type employee
+ essid aruba_radius
+ utf8
+ opmode wpa3-aes-ccm-128
+ max-authentication-failures 0
+ vlan TechTeam
+ auth-server picnic_radius
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter arp
+ blacklist
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+
+wlan ssid-profile aruba_psk
+ enable
+ type employee
+ essid aruba_psk
+ utf8
+ opmode wpa3-sae-aes
+ max-authentication-failures 0
+ vlan TechTeam
+ auth-server InternalServer
+ wpa-passphrase XXXXXXXXXXXXXXXX
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter arp
+ blacklist
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+
+
+
+auth-survivability cache-time-out 24
+
+
+
+wlan auth-server picnic_radius
+ ip XXXXXXXXXXXXXXXX
+ port 1812
+ acctport 1813
+ key XXXXXXXXXXXXXXXX
+
+wlan external-captive-portal
+ server localhost
+ port 80
+ url "/"
+ auth-text "Authenticated"
+ auto-whitelist-disable
+ https
+
+
+blacklist-time 3600
+auth-failure-blacklist-time 3600
+
+
+
+ids
+ wireless-containment none
+
+
+wired-port-profile default_wired_port_profile
+ switchport-mode trunk
+ allowed-vlan all
+ native-vlan 1
+ no shutdown
+ access-rule-name default_wired_port_profile
+ speed auto
+ duplex full
+ no poe
+ type employee
+ captive-portal disable
+ no dot1x
+
+
+enet0-port-profile default_wired_port_profile
+
+uplink
+ preemption
+ enforce none
+ failover-internet-pkt-lost-cnt 10
+ failover-internet-pkt-send-freq 30
+ failover-vpn-timeout 180
+
+
+
+airgroup
+ disable
+
+airgroupservice airplay
+ disable
+ description AirPlay
+
+airgroupservice airprint
+ disable
+ description AirPrint
+
+
+
+
+
+
+clarity
+ inline-sta-stats
+ inline-auth-stats
+ inline-dhcp-stats
+ inline-dns-stats
+
+cluster-security
+ allow-low-assurance-devices
+
+
+per-ap-settings %_sys_lan_mac%
+%if my_name%
+hostname %my_name%
+%endif%
